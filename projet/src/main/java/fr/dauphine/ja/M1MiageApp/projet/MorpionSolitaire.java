@@ -1,33 +1,31 @@
 package fr.dauphine.ja.M1MiageApp.projet;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.util.List;
-import javax.swing.*;
- 
+import java.awt.BorderLayout;
+import java.awt.Container;
+
+import javax.swing.JFrame;
+
 public class MorpionSolitaire extends JFrame {
- 
-    /**
+
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	MorpionSolitairePanel panel;
-	
-	public MorpionSolitaire() {
-        Container content = getContentPane();
-        content.setLayout(new BorderLayout());
-        panel = new MorpionSolitairePanel();
-        content.add(panel, BorderLayout.CENTER);
-        setTitle("MorpionSolitaire");
-        pack();
-        setLocationRelativeTo(null);
-    }
- 
-    @SuppressWarnings("static-access")
-	public static void main(String[] args) {
-        JFrame f = new MorpionSolitaire();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setVisible(true);
-    }
+
+	public MorpionSolitaire(int i) {
+		Container content = getContentPane();
+		content.setLayout(new BorderLayout());
+		
+		if(i == 0) {
+			MorpionSolitaireComputerPanel panel = new MorpionSolitaireComputerPanel();
+			content.add(panel, BorderLayout.CENTER);
+		}else{
+			MorpionSolitairePlayerPanel panel = new MorpionSolitairePlayerPanel();
+			content.add(panel, BorderLayout.CENTER);
+		}
+		
+		setTitle("Morpion Solitaire");
+		pack();
+		setLocationRelativeTo(null);
+	}
 }
