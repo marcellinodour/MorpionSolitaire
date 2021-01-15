@@ -15,7 +15,6 @@ public class Home extends JFrame{
 
 	public Home(){
 		Container content = getContentPane();
-		content.setLayout(new BorderLayout());
 		panel = new HomePanel();
 		content.add(panel);
 		setTitle("Home - Morpion Solitaire");

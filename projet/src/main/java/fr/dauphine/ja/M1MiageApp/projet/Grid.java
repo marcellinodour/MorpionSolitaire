@@ -37,6 +37,7 @@ class Grid {
 	List<Line> computerLines;
 	Map<Point, Integer> playerMoves;
 	List<Line> playerLines;
+	String game_version = null;
 
 	class Line {
 		final Point p1, p2;
@@ -59,13 +60,14 @@ class Grid {
 		}
 	}
 
-	public Grid(int cs, int ps) {
+	public Grid(int cs, int ps, String game_version) {
 		cellSize = cs;
 		pointSize = ps;
 		halfCell = cs / 2;
 		points = new int[50][50];
 		minC = minR = 0;
 		maxC = maxR = 50;
+		this.game_version = game_version;
 		newGame();
 	}
 
@@ -273,9 +275,23 @@ class Grid {
 				else
 					break;
 			}
+
 			if (result.size() == 5) {
-				candidates.add(new Choice(new ArrayList<Point>(result),
-						new int[]{dir, end}));
+				if(game_version.equals("5T")) {
+					int cpt_5T = 0;
+					cpt_5T = 0;
+					for( Point k : result) {
+						int k_2 = points[k.x][k.y];
+						if(k_2 == EMPTY) {
+							cpt_5T++;
+						}
+					}
+					if(cpt_5T == 1) {
+						candidates.add(new Choice(new ArrayList<Point>(result), new int[]{dir, end}));
+					}
+				} else {
+					candidates.add(new Choice(new ArrayList<Point>(result), new int[]{dir, end}));
+				}
 			}
 		}
 	}

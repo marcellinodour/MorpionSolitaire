@@ -32,7 +32,7 @@ class MorpionSolitaireComputerPanel extends JPanel implements ActionListener {
 	int score;
 	Font scoreFont;
 
-	public MorpionSolitaireComputerPanel() {
+	public MorpionSolitaireComputerPanel(String game_version) {
 		setPreferredSize(new Dimension(1000, 750));
 		setBackground(Color.white);
 		setLayout(null);
@@ -45,7 +45,7 @@ class MorpionSolitaireComputerPanel extends JPanel implements ActionListener {
 		setFont(new Font("SansSerif", Font.BOLD, 16));
 		scoreFont = new Font("SansSerif", Font.BOLD, 12);
 
-		grid = new Grid(35, 9);
+		grid = new Grid(35, 9, game_version);
 
 		start();
 	}
