@@ -17,7 +17,7 @@ import fr.dauphine.ja.M1MiageApp.projet.Grid.Result;
 
 class Grid {
 	enum Result {
-		GOOD, BAD, UGLY
+		OK, KO, ERROR
 	}
 
 	final int EMPTY = 0, POINT = 1, HORI = 2, VERT = 4, DIUP = 8, DIDO = 16,
@@ -59,7 +59,7 @@ class Grid {
 		}
 	}
 
-	Grid(int cs, int ps) {
+	public Grid(int cs, int ps) {
 		cellSize = cs;
 		pointSize = ps;
 		halfCell = cs / 2;
@@ -70,7 +70,7 @@ class Grid {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	final void newGame() {
+	public final void newGame() {
 		for (int r = minR; r < maxR; r++)
 			for (int c = minC; c < maxC; c++)
 				points[r][c] = EMPTY;
@@ -92,7 +92,7 @@ class Grid {
 					points[20 + r][20 + c] = POINT;
 	}
 
-	void draw(Graphics2D g, int w, int h) {
+	public void draw(Graphics2D g, int w, int h) {
 		centerX = w / 2;
 		centerY = h / 2;
 		origX = centerX - halfCell - 24 * cellSize;
@@ -114,30 +114,10 @@ class Grid {
 		g.setStroke(new BasicStroke(2));
 
 		// computerLines
-		if(computerLines.size() > 0) {
-			for (int i = 0 ; i < computerLines.size(); i++) {
-				Line line = computerLines.get(i);
-				g.setColor(Color.red);
-				int x1 = origX + line.p1.x * cellSize;
-				int y1 = origY + line.p1.y * cellSize;
-				int x2 = origX + line.p2.x * cellSize;
-				int y2 = origY + line.p2.y * cellSize;
-				g.drawLine(x1, y1, x2, y2);
-			}
-		}
+		drawLines(computerLines, g, Color.red);
 
 		// playerLines
-		if(playerLines.size() > 0) {
-			for (int i = 0 ; i < playerLines.size(); i++) {
-				Line line = playerLines.get(i);
-				g.setColor(Color.blue);
-				int x1 = origX + line.p1.x * cellSize;
-				int y1 = origY + line.p1.y * cellSize;
-				int x2 = origX + line.p2.x * cellSize;
-				int y2 = origY + line.p2.y * cellSize;
-				g.drawLine(x1, y1, x2, y2);
-			}
-		}
+		drawLines(playerLines, g, Color.blue);
 
 		// points
 		for (int r = minR; r < maxR; r++)
@@ -164,39 +144,29 @@ class Grid {
 
 	}
 
+	private void drawLines(List<Line> lines, Graphics2D g, Color color) {
+		if(lines.size() > 0) {
+			for (int i = 0 ; i < lines.size(); i++) {
+				Line line = lines.get(i);
+				g.setColor(color);
+				int x1 = origX + line.p1.x * cellSize;
+				int y1 = origY + line.p1.y * cellSize;
+				int x2 = origX + line.p2.x * cellSize;
+				int y2 = origY + line.p2.y * cellSize;
+				g.drawLine(x1, y1, x2, y2);
+			}
+		}
+	}
+
 	private void drawPoint(Graphics2D g, int x, int y) {
 		g.setFont(new Font("SansSerif", Font.PLAIN, 12));
-		FontMetrics fm = g.getFontMetrics();
-		String score;
-		double length_score;
-		
+		String score = null;
+
 		if(computerMoves.containsKey(new Point(x, y))) {
-			score = computerMoves.get(new Point(x, y)).toString();
-			length_score = fm.getStringBounds(score, g).getWidth();
-			
-			x = origX + x * cellSize - (pointSize / 2);
-			y = origY + y * cellSize - (pointSize / 2);
-			
-			g.setColor(Color.white);
-			g.fillOval(x - 5, y - 5, 20, 20);
-			g.setColor(Color.darkGray);
-			g.drawOval(x - 5, y - 5, 20, 20);
-			g.setColor(Color.red);
-			g.drawString(score, x - (int) (length_score/2) + 5, y + (fm.getMaxAscent()/2) + 3);
+			drawMove(computerMoves, score, x, y, g, Color.red);
 
 		} else if (playerMoves.containsKey(new Point(x, y))) {
-			score = playerMoves.get(new Point(x, y)).toString();
-			length_score = fm.getStringBounds(score, g).getWidth();
-			
-			x = origX + x * cellSize - (pointSize / 2);
-			y = origY + y * cellSize - (pointSize / 2);
-			
-			g.setColor(Color.white);
-			g.fillOval(x - 5, y - 5, 20, 20);
-			g.setColor(Color.darkGray);
-			g.drawOval(x - 5, y - 5, 20, 20);
-			g.setColor(Color.blue);
-			g.drawString(score, x - (int) (length_score/2) + 5, y + (fm.getMaxAscent()/2) + 3);
+			drawMove(playerMoves, score, x, y, g, Color.blue);
 		}
 		else {
 			x = origX + x * cellSize - (pointSize / 2);
@@ -207,30 +177,48 @@ class Grid {
 
 	}
 
-	Result computerMove(int r, int c, int score) {
+	private void drawMove(Map<Point, Integer> moves, String score, int x, int y, Graphics2D g, Color color) {
+		FontMetrics fm = g.getFontMetrics();
+		double length_score;
+
+		score = moves.get(new Point(x, y)).toString();
+		length_score = fm.getStringBounds(score, g).getWidth();
+
+		x = origX + x * cellSize - (pointSize / 2);
+		y = origY + y * cellSize - (pointSize / 2);
+
+		g.setColor(Color.white);
+		g.fillOval(x - 5, y - 5, 20, 20);
+		g.setColor(Color.darkGray);
+		g.drawOval(x - 5, y - 5, 20, 20);
+		g.setColor(color);
+		g.drawString(score, x - (int) (length_score/2) + 5, y + (fm.getMaxAscent()/2) + 3);
+	}
+
+	public Result computerMove(int r, int c, int score) {
 		checkLines(r, c);
 		if (candidates.size() > 0) {
 			Choice choice = candidates.get(0);
 			addLine(choice.points, choice.dir, 0);
 			computerMoves.put(new Point(c,r), score);
-			return Result.GOOD;
+			return Result.OK;
 		}
-		return Result.BAD;
+		return Result.KO;
 	}
 
-	Result playerMove(float x, float y, int score) {
+	public Result playerMove(float x, float y, int score) {
 		int r = Math.round((y - origY) / cellSize);
 		int c = Math.round((x - origX) / cellSize);
 
 		// see if inside active area
 		if (c < minC || c > maxC || r < minR || r > maxR)
-			return Result.BAD;
+			return Result.KO;
 
 		// only process when mouse click is close enough to grid point
 		int diffX = (int) Math.abs(x - (origX + c * cellSize));
 		int diffY = (int) Math.abs(y - (origY + r * cellSize));
 		if (diffX > cellSize / 5 || diffY > cellSize / 5)
-			return Result.BAD;
+			return Result.KO;
 
 		// did we have a choice in the previous turn
 		if ((points[r][c] & CAND) != 0) {
@@ -242,11 +230,11 @@ class Grid {
 					points[p.y][p.x] &= ~(CAND | ORIG);
 			}
 			choices.clear();
-			return Result.GOOD;
+			return Result.OK;
 		}
 
 		if (points[r][c] != EMPTY || choices.size() > 0)
-			return Result.BAD;
+			return Result.KO;
 
 		checkLines(r, c);
 
@@ -254,7 +242,7 @@ class Grid {
 			Choice choice = candidates.get(0);
 			addLine(choice.points, choice.dir, 1);
 			playerMoves.put(new Point(c, r), score);
-			return Result.GOOD;
+			return Result.OK;
 		} else if (candidates.size() > 1) {
 			// we can make more than one line
 			points[r][c] |= ORIG;
@@ -266,13 +254,13 @@ class Grid {
 				points[p.y][p.x] |= CAND;
 				choices.put(p, ch);
 			}
-			return Result.UGLY;
+			return Result.ERROR;
 		}
 
-		return Result.BAD;
+		return Result.KO;
 	}
 
-	void checkLine(int dir, int end, int r, int c, int rIncr, int cIncr) {
+	private void checkLine(int dir, int end, int r, int c, int rIncr, int cIncr) {
 		List<Point> result = new ArrayList<Point>(5);
 		for (int i = -4; i < 1; i++) {
 			result.clear();
@@ -292,7 +280,7 @@ class Grid {
 		}
 	}
 
-	void checkLines(int r, int c) {
+	private void checkLines(int r, int c) {
 		candidates.clear();
 		checkLine(HORI, HORI_END, r, c, 0, 1);
 		checkLine(VERT, VERT_END, r, c, 1, 0);
@@ -300,7 +288,7 @@ class Grid {
 		checkLine(DIDO, DIDO_END, r, c, 1, 1);
 	}
 
-	void addLine(List<Point> line, int[] dir, int state) {
+	private void addLine(List<Point> line, int[] dir, int state) {
 		Point p1 = line.get(0);
 		Point p2 = line.get(line.size() - 1);
 
@@ -329,7 +317,7 @@ class Grid {
 		maxR = Math.max(p1.y + 1, Math.max(p2.y + 1, maxR));
 	}
 
-	List<Point> possibleMoves() {
+	public List<Point> possibleMoves() {
 		List<Point> moves = new ArrayList<Point>();
 		for (int r = minR; r < maxR; r++)
 			for (int c = minC; c < maxC; c++) {
@@ -342,7 +330,7 @@ class Grid {
 		return moves;
 	}
 
-	void showHints() {
+	public void showHints() {
 		for (Point p : possibleMoves())
 			points[p.y][p.x] |= HINT;
 	}

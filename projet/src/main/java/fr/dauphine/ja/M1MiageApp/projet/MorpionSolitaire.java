@@ -17,14 +17,13 @@ public class MorpionSolitaire extends JFrame {
 		content.setLayout(new BorderLayout());
 		
 		if(i == 0) {
-			MorpionSolitaireComputerPanel panel = new MorpionSolitaireComputerPanel();
-			content.add(panel, BorderLayout.CENTER);
+			setTitle("Morpion Solitaire - Ordinateur");
+			content.add(new MorpionSolitaireComputerPanel(), BorderLayout.CENTER);
 		}else{
-			MorpionSolitairePlayerPanel panel = new MorpionSolitairePlayerPanel();
-			content.add(panel, BorderLayout.CENTER);
+			setTitle("Morpion Solitaire - Joueur");
+			content.add(new MorpionSolitairePlayerPanel(), BorderLayout.CENTER);
 		}
 		
-		setTitle("Morpion Solitaire");
 		pack();
 		setLocationRelativeTo(null);
 	}

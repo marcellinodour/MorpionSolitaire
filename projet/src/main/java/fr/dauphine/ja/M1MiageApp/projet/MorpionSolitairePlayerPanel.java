@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.List;
 import java.util.Random;
 
@@ -50,6 +51,10 @@ class MorpionSolitairePlayerPanel extends JPanel implements ActionListener {
 		grid = new Grid(35, 9);
 		grid.newGame();
 
+		start();
+	}
+
+	public final void start() {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -57,7 +62,7 @@ class MorpionSolitairePlayerPanel extends JPanel implements ActionListener {
 					grid.showHints();
 				else {
 					Grid.Result res = grid.playerMove(e.getX(), e.getY(), score + 1);
-					if (res == Grid.Result.GOOD) {
+					if (res == Grid.Result.OK) {
 						score++;
 					}
 
@@ -69,19 +74,11 @@ class MorpionSolitairePlayerPanel extends JPanel implements ActionListener {
 				repaint();
 			}
 		});
-
-		start();
-	}
-
-	public final void start() {
+		
 		new Thread(new Runnable() {
 			public void run() {
-				while (!end_of_game) {
-					try {
-						Thread.sleep(100L);
-					} catch (InterruptedException e) {
-						throw new IllegalStateException(e);
-					}
+				while (true) {
+					
 				}
 			}
 		}).start();
