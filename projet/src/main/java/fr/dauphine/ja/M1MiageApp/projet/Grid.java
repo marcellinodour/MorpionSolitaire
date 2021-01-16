@@ -182,14 +182,20 @@ class Grid {
 	private void drawMove(Map<Point, Integer> moves, String score, int x, int y, Graphics2D g, Color color) {
 		FontMetrics fm = g.getFontMetrics();
 		double length_score;
+		int p = points[y][x];
 
 		score = moves.get(new Point(x, y)).toString();
 		length_score = fm.getStringBounds(score, g).getWidth();
 
 		x = origX + x * cellSize - (pointSize / 2);
 		y = origY + y * cellSize - (pointSize / 2);
-
-		g.setColor(Color.white);
+		
+		if((p & CAND) != 0) {
+			g.setColor(Color.green);
+		}else {
+			g.setColor(Color.white);
+		}
+		
 		g.fillOval(x - 5, y - 5, 20, 20);
 		g.setColor(Color.darkGray);
 		g.drawOval(x - 5, y - 5, 20, 20);
